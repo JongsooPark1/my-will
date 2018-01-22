@@ -21,7 +21,7 @@ public class UserController {
 		log.info("user: " + user);
 		users.add(user);
 		return "redirect:/list";		// 연결하기 위해선 redirect:/를 사용한다. redirect:/list로 return을 하면 list.html로
-									// 가는 것이 아니라 /list로 간다
+									// 가는 것이 아니라 /list로 간다 
 	}
 	
 	@GetMapping("/list")
