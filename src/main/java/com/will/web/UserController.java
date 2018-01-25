@@ -47,6 +47,12 @@ public class UserController {
 		return "redirect:/";
 	}
 	
+	@GetMapping("/logout")			// 여기서 당연히 get방식이라고 생각햇엇는데? post 방식으로 하면 안되는데? 4-2 10분 넘어서
+	public String logout(HttpSession session) {
+		session.removeAttribute("user");			// 이거 좀 이상한 것 같은데, 왜냐면 session이 전역 변수로 되어 있어야 각기 다른 메소드에서 상태 바꿀 수 있잖아
+		return "redirect:/";
+	}
+	
 	@GetMapping("/form")		// GetMapping으로만 url로 접근할 수 있다.
 	public String createFrom() {
 		return "user/form";
