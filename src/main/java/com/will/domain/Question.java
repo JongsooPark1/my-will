@@ -1,7 +1,19 @@
-package com.will.web;
+package com.will.domain;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+
+@Entity
 public class Question {
+	@Id
+	@GeneratedValue
+	private Long id;
+	
+	@Column(nullable = false)			// 할 필요 있나?
 	private String writer;
+	
 	private String title;
 	private String contents;
 	

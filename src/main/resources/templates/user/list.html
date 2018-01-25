@@ -1,4 +1,10 @@
-{{> user}}
+<!DOCTYPE html>
+<html lang="kr">
+<head>
+{{> /include/header}}
+</head>
+<body>
+{{> /include/navigation}}
 
 <div class="container" id="main">
    <div class="col-md-10 col-md-offset-1">
@@ -12,7 +18,7 @@
               {{#users}}
               <tbody>
                 <tr>
-                    <th scope="row">1</th> <td>{{userId}}</td> <td>{{name}}</td> <td>{{email}}</td><td><a href="/users/{{userId}}" class="btn btn-success" role="button">수정</a></td>
+                    <th scope="row">{{id}}</th> <td>{{userId}}</td> <td>{{name}}</td> <td>{{email}}</td><td><a href="/users/{{id}}/form" class="btn btn-success" role="button">수정</a></td>
                 </tr>
                 {{/users}}
               </tbody>
@@ -21,9 +27,6 @@
     </div>
 </div>
 
-<!-- script references -->
-<script src="../js/jquery-2.2.0.min.js"></script>
-<script src="../js/bootstrap.min.js"></script>
-<script src="../js/scripts.js"></script>
+{{> /include/footer}}
 	</body>
 </html>
