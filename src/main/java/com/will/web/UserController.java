@@ -35,12 +35,15 @@ public class UserController {
 	public String login(String userId, String password, HttpSession session) {
 		User user = userRepository.findByUserId(userId);
 		if (user == null) {
+			log.info("login failure");
 			return "redirect:/users/loginForm";
 		}
-		if (!password.equals(user.getPassword())) {
+		if (!user.matchPassword(password)) {
+			log.info("login failure");
 			return "redirect:/users/loginForm";
 		}
-		session.setAttribute("sessionedUser", user);		// 모델에 들어가는 이름과 session에 들어가는 이름과 다르게 해야한다
+		log.info("login success");
+		session.setAttribute(HttpSessionUtils.USER_SESSION_KEY, user);		// 모델에 들어가는 이름과 session에 들어가는 이름과 다르게 해야한다
 		
 		// loging이 되었다는 정보를 어딘가에 남겨둔다 -> 쿠키 또는 세션
 		
@@ -49,7 +52,7 @@ public class UserController {
 	
 	@GetMapping("/logout")			// 여기서 당연히 get방식이라고 생각햇엇는데? post 방식으로 하면 안되는데? 4-2 10분 넘어서
 	public String logout(HttpSession session) {
-		session.removeAttribute("sessionedUser");			// 이거 좀 이상한 것 같은데, 왜냐면 session이 전역 변수로 되어 있어야 각기 다른 메소드에서 상태 바꿀 수 있잖아
+		session.removeAttribute(HttpSessionUtils.USER_SESSION_KEY);			// 이거 좀 이상한 것 같은데, 왜냐면 session이 전역 변수로 되어 있어야 각기 다른 메소드에서 상태 바꿀 수 있잖아
 		return "redirect:/";
 	}
 	
@@ -73,11 +76,10 @@ public class UserController {
 	
 	@GetMapping("/{id}/form")		// {{id}}로 하면 왜 안되지?
 	public String updateForm(@PathVariable Long id, Model model, HttpSession session) {
-		Object tempUser = session.getAttribute("sessionedUser");		//session 내에서 sessionedUser 가져오기
-		if (tempUser == null) {
+		if (HttpSessionUtils.isLoginUser(session)) {
 			return "redirect:/users/loginForm";
 		}
-		User sessionedUser = (User) tempUser;
+		User sessionedUser = HttpSessionUtils.getUserFromSession(session);
 		if (!id.equals(sessionedUser.getId())) {
 			throw new IllegalStateException("u cant modify your information");
 		}
@@ -87,11 +89,10 @@ public class UserController {
 	
 	@PutMapping("/{id}")
 	public String update(@PathVariable Long id, User updatedUser, HttpSession session) {
-		Object tempUser = session.getAttribute("sessionedUser");
-		if (tempUser == null) {
+		if (HttpSessionUtils.isLoginUser(session)) {
 			return "redirect:/users/loginForm";
 		}
-		User sessionedUser = (User) tempUser;
+		User sessionedUser = HttpSessionUtils.getUserFromSession(session);
 		if (!id.equals(sessionedUser.getId())) {
 			throw new IllegalStateException("u cant modify your information");
 		}

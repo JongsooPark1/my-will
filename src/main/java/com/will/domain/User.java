@@ -42,6 +42,13 @@ public class User {
 		this.password = password;
 	}
 	
+	public boolean matchPassword(String inputPassword) {
+		if (inputPassword == null) {
+			return false;
+		}
+		return inputPassword.equals(password);
+	}
+	
 	public String getName() {
 		return name;
 	}

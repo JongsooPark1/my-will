@@ -11,12 +11,21 @@ public class Question {
 	@GeneratedValue
 	private Long id;
 	
-	@Column(nullable = false)			// 할 필요 있나?
 	private String writer;
-	
 	private String title;
 	private String contents;
 	
+	public Question() {			// JPA 에서는 mapping을 할 때 default 생성자를 필요로한다
+		
+	}
+	
+	public Question(String writer, String title, String contents) {
+		super();		// 왜 있는거야?
+		this.writer = writer;
+		this.title = title;
+		this.contents = contents;
+	}
+
 	public String getWriter() {
 		return writer;
 	}
