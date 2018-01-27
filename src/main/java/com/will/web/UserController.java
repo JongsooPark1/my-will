@@ -65,7 +65,14 @@ public class UserController {
 	public String create(User user) {
 		userRepository.save(user);
 		return "redirect:/users";		// 연결하기 위해선 redirect:/를 사용한다. redirect:/list로 return을 하면 list.html로
-									// 가는 것이 아니라 /list로 간다 
+									// 가는 것이 아니라 /list로 간다. ui 결과는 똑같지만 클라이언트와 서버가 두 번 연결됨
+	}
+	
+	@PostMapping("")			// 이렇게 하면 안된다. 왜냐면 데이터 저장안되어있음. 무상태이기 때문에
+	public String create2(User user, Model model) {
+		userRepository.save(user);
+		model.addAttribute("users", userRepository.findAll());
+		return "redirect:/users";
 	}
 	
 	@GetMapping("")				// 받은 data를 뿌려줄 곳
