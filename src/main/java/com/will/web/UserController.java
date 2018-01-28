@@ -68,12 +68,12 @@ public class UserController {
 									// 가는 것이 아니라 /list로 간다. ui 결과는 똑같지만 클라이언트와 서버가 두 번 연결됨
 	}
 	
-	@PostMapping("")			// 이렇게 하면 안된다. 왜냐면 데이터 저장안되어있음. 무상태이기 때문에
-	public String create2(User user, Model model) {
-		userRepository.save(user);
-		model.addAttribute("users", userRepository.findAll());
-		return "redirect:/users";
-	}
+//	@PostMapping("")			// 이렇게 하면 안된다. 왜냐면 데이터 저장안되어있음. 무상태이기 때문에. 다시 확인하기
+//	public String create2(User user, Model model) {
+//		userRepository.save(user);
+//		model.addAttribute("users", userRepository.findAll());
+//		return "redirect:/users";
+//	}
 	
 	@GetMapping("")				// 받은 data를 뿌려줄 곳
 	public String list(Model model) {
@@ -81,9 +81,9 @@ public class UserController {
 		return "user/list";
 	}
 	
-	@GetMapping("/{id}/form")		// {{id}}로 하면 왜 안되지?
+	@GetMapping("/{id}/form")
 	public String updateForm(@PathVariable Long id, Model model, HttpSession session) {
-		if (HttpSessionUtils.isLoginUser(session)) {
+		if (!HttpSessionUtils.isLoginUser(session)) {
 			return "redirect:/users/loginForm";
 		}
 		User sessionedUser = HttpSessionUtils.getUserFromSession(session);
@@ -96,7 +96,7 @@ public class UserController {
 	
 	@PutMapping("/{id}")
 	public String update(@PathVariable Long id, User updatedUser, HttpSession session) {
-		if (HttpSessionUtils.isLoginUser(session)) {
+		if (!HttpSessionUtils.isLoginUser(session)) {
 			return "redirect:/users/loginForm";
 		}
 		User sessionedUser = HttpSessionUtils.getUserFromSession(session);
