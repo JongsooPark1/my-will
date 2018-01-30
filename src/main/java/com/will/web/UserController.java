@@ -28,7 +28,7 @@ public class UserController {
 	
 	@GetMapping("/loginForm")
 	public String loginForm() {
-		return "user/login";
+		return "/user/login";
 	}
 	
 	@PostMapping("/login")
@@ -58,7 +58,7 @@ public class UserController {
 	
 	@GetMapping("/form")		// GetMapping으로만 url로 접근할 수 있다.
 	public String createFrom() {
-		return "user/form";
+		return "/user/form";
 	}
 	
 	@PostMapping("")			//data를 저장할 곳. html의 action과 일치해야 할 부분
@@ -78,7 +78,7 @@ public class UserController {
 	@GetMapping("")				// 받은 data를 뿌려줄 곳
 	public String list(Model model) {
 		model.addAttribute("users", userRepository.findAll());
-		return "user/list";
+		return "/user/list";
 	}
 	
 	@GetMapping("/{id}/form")
@@ -91,7 +91,7 @@ public class UserController {
 			throw new IllegalStateException("u cant modify your information");
 		}
 		model.addAttribute("user", userRepository.findOne(id));
-		return "user/updateForm";
+		return "/user/updateForm";
 	}
 	
 	@PutMapping("/{id}")
