@@ -57,44 +57,52 @@ public class QuestionsController {
 	
 	@GetMapping("/{id}/form")
 	public String updateForm(@PathVariable Long id, Model model, HttpSession session) {
+		try {
+			Question question = questionRepository.findOne(id);
+			hasPermission(session, question);
+			model.addAttribute("question", question);
+			return "/qna/updateForm";
+		} catch(IllegalStateException e) {
+			model.addAttribute("errorMessage", e.getMessage());
+			return "/user/login";
+		}
+	}
+	
+	public boolean hasPermission(HttpSession session, Question question) {
 		if (!HttpSessionUtils.isLoginUser(session)) {
-			return "/users/loginForm";
+			throw new IllegalStateException("u need to login");
 		}
 		User loginUser = HttpSessionUtils.getUserFromSession(session);
-		Question question = questionRepository.findOne(id);
 		if (!question.isSameWriter(loginUser)) {
-			return "/users/loginForm";
+			throw new IllegalStateException("u can modify and delete your own question");
 		}
-		model.addAttribute("question", questionRepository.findOne(id));
-		return "/qna/updateForm";
+		return true;
 	}
 	
 	@PutMapping("/{id}")
-	public String update(@PathVariable Long id, String title, String contents, HttpSession session) {
-		if (!HttpSessionUtils.isLoginUser(session)) {
-			return "/users/loginForm";
+	public String update(@PathVariable Long id, String title, String contents, Model model, HttpSession session) {
+		try {
+			Question question = questionRepository.findOne(id);
+			hasPermission(session, question);
+			question.update(title, contents);
+			questionRepository.save(question);
+			return String.format("redirect:/questions/%d", id);
+		} catch(IllegalStateException e) {
+			model.addAttribute("errorMessage", e.getMessage());
+			return "/user/login";
 		}
-		User loginUser = HttpSessionUtils.getUserFromSession(session);
-		Question question = questionRepository.findOne(id);
-		if (!question.isSameWriter(loginUser)) {
-			return "/users/loginForm";
-		}
-		question.update(title, contents);
-		questionRepository.save(question);
-		return String.format("redirect:/questions/%d", id);
 	}
 	
 	@DeleteMapping("/{id}")			//url이 같은 것이 3개가 있지만, delteMapping, putMapping, getMapping에 따라 각각 다른일을 한다. html에서 value값도 put, delete로 바꿔줘야한다
-	public String delete(@PathVariable Long id, HttpSession session) {
-		if (!HttpSessionUtils.isLoginUser(session)) {
-			return "/users/loginForm";
+	public String delete(@PathVariable Long id, Model model, HttpSession session) {
+		try {
+			Question question = questionRepository.findOne(id);
+			hasPermission(session, question);
+			questionRepository.delete(id);
+			return "redirect:/";
+		} catch(IllegalStateException e) {
+			model.addAttribute("errorMessage", e.getMessage());
+			return "/user/login";
 		}
-		User loginUser = HttpSessionUtils.getUserFromSession(session);
-		Question question = questionRepository.findOne(id);
-		if (!question.isSameWriter(loginUser)) {
-			return "/users/loginForm";
-		}
-		questionRepository.delete(id);
-		return "redirect:/";
 	}
 }
